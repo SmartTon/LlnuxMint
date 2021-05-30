@@ -14,6 +14,8 @@ import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.systems.modules.Modules;
+import minegame159.meteorclient.systems.modules.combat.CrystalAura;
 import minegame159.meteorclient.utils.entity.EntityUtils;
 import minegame159.meteorclient.utils.entity.SortPriority;
 import minegame159.meteorclient.utils.entity.Target;
@@ -160,7 +162,7 @@ public class AutoTopBreaker extends Module {
         }
 
         if (autoCrystal.get() && mc.world.getBlockState(blockPosTarget.up(2)).isAir()){
-            mc.player.attack(crystalentity);
+
         }
 
 

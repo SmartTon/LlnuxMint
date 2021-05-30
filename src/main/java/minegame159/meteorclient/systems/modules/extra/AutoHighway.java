@@ -1,16 +1,17 @@
 package minegame159.meteorclient.systems.modules.extra;
 
+import minegame159.meteorclient.events.entity.player.ClipAtLedgeEvent;
+import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.systems.modules.Categories;
-import minegame159.meteorclient.settings.BoolSetting;
-import minegame159.meteorclient.settings.IntSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
+import minegame159.meteorclient.systems.modules.movement.AutoWalk;
+import minegame159.meteorclient.utils.misc.input.Input;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.options.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -39,6 +40,31 @@ public class AutoHighway extends Module {
             .sliderMax(7)
             .build()
     );
+
+    private final Setting<Boolean> safeWalk = sgGeneral.add(new BoolSetting.Builder()
+            .name("safe-walk")
+            .description("safe walk")
+            .defaultValue(true)
+            .build()
+    );
+
+    private final Setting<Boolean> autoWalk = sgGeneral.add(new BoolSetting.Builder()
+            .name("auto-walk")
+            .description("auto walk")
+            .defaultValue(false)
+            .build()
+    );
+
+    private final Setting<AutoWalk.Direction> direction2 = sgGeneral.add(new EnumSetting.Builder<AutoWalk.Direction>()
+            .name("simple-direction")
+            .description("The direction to walk in simple mode.")
+            .defaultValue(AutoWalk.Direction.Forwards)
+            .onChanged(direction1 -> {
+                if (isActive()) unpress();
+            })
+            .build()
+    );
+
 
     private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
             .name("rotate")
@@ -79,11 +105,39 @@ public class AutoHighway extends Module {
     }
 
     @EventHandler
+    private void onClipAtLedge(ClipAtLedgeEvent event) {
+        if (mc.player.input.sneaking) {
+            event.setClip(false);
+            return;
+        }
+
+        if (safeWalk.get()) event.setClip(true);
+    }
+
+    @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (disableOnJump.get() && mc.options.keyJump.isPressed()) {
             toggle();
             return;
         }
+
+        if (autoWalk.get()){
+            switch (direction2.get()) {
+                case Forwards:
+                    setPressed(mc.options.keyForward, true);
+                    break;
+                case Backwards:
+                    setPressed(mc.options.keyBack, true);
+                    break;
+                case Left:
+                    setPressed(mc.options.keyLeft, true);
+                    break;
+                case Right:
+                    setPressed(mc.options.keyRight, true);
+                    break;
+            }
+        }
+
         // Check Obsidian
         if(InvUtils.findItemInHotbar(Items.OBSIDIAN) == -1) return;
         // Get Size
@@ -589,6 +643,18 @@ public class AutoHighway extends Module {
     private int getSize(){
         if (size.get() % 2 == 0) return size.get()-1;
         else return size.get();
+    }
+
+    private void unpress() {
+        setPressed(mc.options.keyForward, false);
+        setPressed(mc.options.keyBack, false);
+        setPressed(mc.options.keyLeft, false);
+        setPressed(mc.options.keyRight, false);
+    }
+
+    private void setPressed(KeyBinding key, boolean pressed) {
+        key.setPressed(pressed);
+        Input.setKeyState(key, pressed);
     }
 
     private void nextLayer(){
