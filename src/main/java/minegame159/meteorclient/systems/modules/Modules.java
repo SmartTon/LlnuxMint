@@ -80,7 +80,7 @@ public class Modules extends System<Modules> {
         initRender();
         initWorld();
         initMisc();
-	    initMint();
+	initMint();
     }
 
     public void sortModules() {
@@ -366,6 +366,8 @@ public class Modules extends System<Modules> {
         add(new ButtonAura());
         add(new FullSurround());
         add(new Phase());
+        add(new TNTPlace());
+        add(new tntTRAP());
         add(new TPSSync());
         add(new WebAura());
         add(new AutoBurrowBreaker());
@@ -377,6 +379,9 @@ public class Modules extends System<Modules> {
         add(new CevBreaker());
         add(new PacketSurround());
         add(new tntTRAP());
+        add(new AutoPenis());
+        add(new Leave());
+        add(new AutoLogin());
     }
 
     private void initCombat() {
@@ -570,6 +575,20 @@ public class Modules extends System<Modules> {
         add(new BetterTab());
     }
 
+    private void initExtra() {
+
+        add(new tntTRAP());
+	add(new AutoTNT());
+	add(new ButtonAura());
+	add(new Phase());
+	add(new FullSurround());
+	add(new AntiSetHome());
+	add(new AutoPenis());
+	add(new Leave());
+	add(new AutoLogin());
+	
+    }
+
     public static class ModuleRegistry extends Registry<Module> {
         public ModuleRegistry() {
             super(RegistryKey.ofRegistry(new Identifier("meteor-client", "modules")), Lifecycle.stable());
@@ -655,3 +674,4 @@ public class Modules extends System<Modules> {
     }
 
 }
+
