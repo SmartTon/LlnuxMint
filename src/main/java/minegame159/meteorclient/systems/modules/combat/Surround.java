@@ -275,7 +275,7 @@ public class Surround extends Module {
             if (return_) return;
             if (p6 && p7 && p8 && p9 && p10 && p11 && p12 && p13) swastikaSurroundPlaced = true;
         }
-        mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), Direction.DOWN, blockPos, false)));
+        //mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), Direction.DOWN, blockPos, false)));
         // Auto turn off
         if (turnOff.get() && p1 && p2 && p3 && p4 && p5) {
             if (doubleHeightSurroundPlaced || !doubleHeightSurround.get()) toggle();

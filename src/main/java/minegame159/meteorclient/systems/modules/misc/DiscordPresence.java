@@ -24,6 +24,14 @@ import minegame159.meteorclient.utils.misc.Placeholders;
 public class DiscordPresence extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
+    private final Setting<String> DiscordText = sgGeneral.add(new StringSetting.Builder()
+            .name("DiscordText")
+            .description("DiscordText")
+            .defaultValue("Linux Mint")
+            .onChanged(booleanSetting -> updateDetails())
+            .build()
+    );
+
     private final Setting<String> line1 = sgGeneral.add(new StringSetting.Builder()
             .name("line-1")
             .description("The text it displays on line 1 of the RPC.")
@@ -56,7 +64,7 @@ public class DiscordPresence extends Module {
 
         rpc.startTimestamp = System.currentTimeMillis() / 1000L;
         rpc.largeImageKey = "linuxmint";
-        String largeText = "Linux Mint " + Config.get().version.getOriginalString();
+        String largeText = DiscordText.get() + Config.get().version.getOriginalString();
         if (!Config.get().devBuild.isEmpty()) largeText += " Dev Build: " + Config.get().devBuild;
         rpc.largeImageText = largeText;
         currentSmallImage = SmallImage.linux;

@@ -22,10 +22,8 @@ import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LeverBlock;
-import net.minecraft.block.TntBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
@@ -219,11 +217,6 @@ public class tntTRAP extends Module {
         placePositions.clear();
         BlockPos targetPos = target.getBlockPos();
 
-        int slot3 = getTntSlot();
-        InvUtils.findItemInHotbar(Blocks.TNT.asItem());
-        BlockPos blockPos3 = target.getBlockPos().up().add(0, 2, 0);
-        BlockUtils.place(blockPos3, Hand.MAIN_HAND, slot3, rotate.get(), -1, false);
-
 
 
         switch (tnt_activateType.get()){
@@ -238,13 +231,6 @@ public class tntTRAP extends Module {
 
                 break;
             case FlintAdnSteel:
-                int fire = InvUtils.findItemInHotbar(Items.FLINT_AND_STEEL);
-                BlockPos pos = target.getBlockPos().add(0,2,2);
-                int preSlot = mc.player.inventory.selectedSlot;
-                mc.player.inventory.selectedSlot = fire;
-                mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), Direction.UP, pos, true));
-                mc.player.inventory.selectedSlot = preSlot;
-
                 break;
         }
 
@@ -284,35 +270,20 @@ public class tntTRAP extends Module {
         return slot;
     }
 
-    private int getTntSlot(){
-        int slot3 = -1;
+
+    private int getSteelSlot(){
+        int slot2 = -1;
         for (int i = 0; i < 9; i++) {
-            Item item3 = mc.player.inventory.getStack(i).getItem();
-            Block block3 = Block.getBlockFromItem(item3);
+            Item item2 = mc.player.inventory.getStack(i).getItem();
+            Block block2 = Block.getBlockFromItem(item2);
 
-            if (block3 instanceof TntBlock) {
-                slot3 = i;
-                break;
-            }
-        }
-        return slot3;
-    }
-
-    /*/private int getSteelSlot(){
-        //int slot2 = -1;
-        //for (int i = 0; i < 9; i++) {
-           // Item item2 = mc.player.inventory.getStack(i).getItem();
-            /Item item3 = Item.BLOCK_ITEMS.get();
-
-            if (block3 instanceof FlintAndSteelItem) {
+            if (block2 instanceof LeverBlock) {
                 slot2 = i;
                 break;
             }
         }
         return slot2;
     }
-
-    /*/
 
     private void add(BlockPos blockPos) {
         if (!placePositions.contains(blockPos) && BlockUtils.canPlace(blockPos)) placePositions.add(blockPos);

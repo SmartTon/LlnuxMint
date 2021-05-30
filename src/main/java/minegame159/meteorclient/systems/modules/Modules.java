@@ -80,7 +80,7 @@ public class Modules extends System<Modules> {
         initRender();
         initWorld();
         initMisc();
-	initMint();
+	    initMint();
     }
 
     public void sortModules() {
@@ -366,8 +366,6 @@ public class Modules extends System<Modules> {
         add(new ButtonAura());
         add(new FullSurround());
         add(new Phase());
-        add(new TNTPlace());
-        add(new tntTRAP());
         add(new TPSSync());
         add(new WebAura());
         add(new AutoBurrowBreaker());
@@ -570,16 +568,6 @@ public class Modules extends System<Modules> {
         add(new VisualRange());
         add(new VanillaSpoof());
         add(new BetterTab());
-    }
-
-    private void initExtra() {
-        add(new TntTrap());
-	add(new AutoTNT());
-	add(new ButtonAura());
-	add(new Phase());
-	add(new FullSurround());
-	add(new AntiSetHome());
-	
     }
 
     public static class ModuleRegistry extends Registry<Module> {
