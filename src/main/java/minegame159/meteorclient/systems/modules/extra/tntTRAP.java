@@ -22,6 +22,7 @@ import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LeverBlock;
+import net.minecraft.block.TntBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -31,6 +32,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.block.AirBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,27 +65,15 @@ public class tntTRAP extends Module {
             .build()
     );
 
-    private final Setting<tntPlacement> tntPToplacement = sgGeneral.add(new EnumSetting.Builder<tntPlacement>()
-            .name("top-blocks")
-            .description("Which blocks to place on the top half of the target.")
-            .defaultValue(tntPlacement.tnt)
+
+    private final Setting<BottomMode> bottomPlacement = sgGeneral.add(new EnumSetting.Builder<BottomMode>()
+            .name("mode")
+            .name("mode")
+            .defaultValue(BottomMode.Full)
             .build()
     );
 
 
-    private final Setting<tntActivate> tnt_activateType = sgGeneral.add(new EnumSetting.Builder<tntActivate>()
-            .name("tnt activate")
-            .description("How to activate tnt.")
-            .defaultValue(tntActivate.FlintAdnSteel)
-            .build()
-    );
-
-    private final Setting<Boolean> antiBreak = sgGeneral.add(new BoolSetting.Builder()
-            .name("anti-break")
-            .description("Prevents flint and steel from being broken.")
-            .defaultValue(false)
-            .build()
-    );
 
     private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
             .name("rotate")
@@ -91,10 +81,9 @@ public class tntTRAP extends Module {
             .defaultValue(true)
             .build()
     );
-
-    private final Setting<Boolean> selfToggle = sgGeneral.add(new BoolSetting.Builder()
-            .name("self-toggle")
-            .description("Turns off after placing all blocks.")
+    private final Setting<Boolean> lever = sgGeneral.add(new BoolSetting.Builder()
+            .name("Lever")
+            .description("places and activates lever to activate tnt")
             .defaultValue(true)
             .build()
     );
@@ -147,7 +136,6 @@ public class tntTRAP extends Module {
     private final List<BlockPos> placePositions = new ArrayList<>();
     private boolean placed;
     private int timer;
-    private int preSlot;
 
     public tntTRAP() {
         super(Categories.Mint, "TNT-trap", "Traps people so tnt aura can work");
@@ -168,7 +156,7 @@ public class tntTRAP extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (selfToggle.get() && placed && placePositions.isEmpty()) {
+        if (5 + 5 == 201 && placed && placePositions.isEmpty()) {
             placed = false;
             toggle();
             return;
@@ -180,7 +168,8 @@ public class tntTRAP extends Module {
             return;
         }
 
-        if (EntityUtils.isBadTarget(target, range.get())) target = EntityUtils.getPlayerTarget(range.get(), priority.get(), false);
+        if (EntityUtils.isBadTarget(target, range.get()))
+            target = EntityUtils.getPlayerTarget(range.get(), priority.get(), false);
         if (EntityUtils.isBadTarget(target, range.get())) return;
 
         fillPlaceArray(target);
@@ -218,26 +207,10 @@ public class tntTRAP extends Module {
         BlockPos targetPos = target.getBlockPos();
 
 
-
-        switch (tnt_activateType.get()){
-            case LEVER:
-                int slot = getLeverSlot();
-                InvUtils.findItemInHotbar(Blocks.LEVER.asItem());
-                BlockPos blockPos = target.getBlockPos().up().add(0, 3, 0);
-                BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), -1, false);
-                InvUtils.findItemInHotbar(Blocks.AIR.asItem());
-                BlockPos blockPos2 = target.getBlockPos().up().add(0, 4, 0);
-                BlockUtils.place(blockPos2, Hand.MAIN_HAND, slot, rotate.get(), -2, false);
-
-                break;
-            case FlintAdnSteel:
-                break;
-        }
-
-        switch (tntPToplacement.get()) {
+        switch (bottomPlacement.get()) {
 
 
-            case tnt:
+            case Full:
 
                 add(targetPos.add(1, 2, 0));
                 add(targetPos.add(-1, 2, 0));
@@ -248,6 +221,20 @@ public class tntTRAP extends Module {
                 add(targetPos.add(1, 1, 0));
                 add(targetPos.add(0, 1, -1));
                 add(targetPos.add(-1, 1, 0));
+
+                int slot = getLeverSlot();
+                InvUtils.findItemInHotbar(Blocks.LEVER.asItem());
+                BlockPos blockPos = target.getBlockPos().up().add(0, 3, 0);
+                BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), 1, false);
+                InvUtils.findItemInHotbar(Blocks.AIR.asItem());
+                BlockPos blockPos2 = target.getBlockPos().up().add(0, 4, 0);
+                BlockUtils.place(blockPos2, Hand.MAIN_HAND, slot, rotate.get(), 1, false);
+                slot = getTntSlot();
+                InvUtils.findItemInHotbar(Blocks.TNT.asItem());
+                BlockPos blockPos3 = target.getBlockPos().up().add(0, 1, 0);
+                BlockUtils.place(blockPos3, Hand.MAIN_HAND, slot, rotate.get(), 1, false);
+
+
 
         }
     }
@@ -269,25 +256,38 @@ public class tntTRAP extends Module {
         }
         return slot;
     }
-
-
-    private int getSteelSlot(){
-        int slot2 = -1;
+    private int getTntSlot() {
+        int slot = -1;
         for (int i = 0; i < 9; i++) {
-            Item item2 = mc.player.inventory.getStack(i).getItem();
-            Block block2 = Block.getBlockFromItem(item2);
+            Item item = mc.player.inventory.getStack(i).getItem();
+            Block block = Block.getBlockFromItem(item);
 
-            if (block2 instanceof LeverBlock) {
-                slot2 = i;
+            if (block instanceof TntBlock) {
+                slot = i;
                 break;
             }
         }
-        return slot2;
+        return slot;
     }
+    private int getNothingSlot() {
+        int slot = -1;
+        for (int i = 0; i < 9; i++) {
+            Item item = mc.player.inventory.getStack(i).getItem();
+            Block block = Block.getBlockFromItem(item);
+
+            if (block instanceof AirBlock) {
+                slot = i;
+                break;
+            }
+        }
+        return slot;
+    }
+
 
     private void add(BlockPos blockPos) {
         if (!placePositions.contains(blockPos) && BlockUtils.canPlace(blockPos)) placePositions.add(blockPos);
     }
+
 
     @Override
     public String getInfoString() {
@@ -295,12 +295,8 @@ public class tntTRAP extends Module {
         return null;
     }
 
-    public enum tntPlacement{
-        tnt
-    }
 
-    public enum tntActivate{
-        LEVER,
-        FlintAdnSteel
+    public enum BottomMode {
+        Full
     }
 }
