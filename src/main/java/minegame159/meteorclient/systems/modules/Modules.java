@@ -366,7 +366,6 @@ public class Modules extends System<Modules> {
         add(new ButtonAura());
         add(new FullSurround());
         add(new Phase());
-        add(new TNTPlace());
         add(new tntTRAP());
         add(new TPSSync());
         add(new WebAura());
@@ -382,6 +381,7 @@ public class Modules extends System<Modules> {
         add(new AutoPenis());
         add(new Leave());
         add(new AutoLogin());
+        add(new BurrowDetect());
     }
 
     private void initCombat() {
