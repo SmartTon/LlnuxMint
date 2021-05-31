@@ -38,7 +38,7 @@ public class DiscordPresence extends Module {
         this.DiscordText = this.sgGeneral.add((new Builder()).name("Discord-mode").description("Choosing mode of discord rpc").defaultValue("Linux Mint").onChanged((booleanSetting) -> {
             this.updateDetails();
         }).build());
-        this.NaturalDiscordID_nogays = this.sgGeneral.add((new Builder()).name("Discord_id").description("Melon hack - 847117414847873056, Linux Mint - 847488385275002920 ").defaultValue("847488385275002920").onChanged((booleanSetting) -> {
+        this.NaturalDiscordID_nogays = this.sgGeneral.add((new Builder()).name("Discord_id").description("Melon hack - 847117414847873056, Linux Mint - 848987277699186690 ").defaultValue("848987277699186690").onChanged((booleanSetting) -> {
             this.updateDetails();
         }).build());
     }
@@ -49,7 +49,7 @@ public class DiscordPresence extends Module {
         DiscordEventHandlers handlers = new DiscordEventHandlers();
         instance.Discord_Initialize(NaturalDiscordID_nogays.get(), handlers, true, (String) null);
         rpc.startTimestamp = System.currentTimeMillis() / 1000L;
-        rpc.largeImageKey = "melons";
+        rpc.largeImageKey = "icon";
         String largeText = DiscordText.get() + Config.get().version.getOriginalString();
         if (!Config.get().devBuild.isEmpty()) {
             largeText = largeText + "    : " + Config.get().devBuild;
@@ -118,4 +118,3 @@ public class DiscordPresence extends Module {
         }
     }
 }
-
