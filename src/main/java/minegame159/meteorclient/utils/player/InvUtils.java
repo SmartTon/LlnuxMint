@@ -77,6 +77,15 @@ public class InvUtils {
         return findItemResult;
     }
 
+    public static void clickSlot(int slot, int button, SlotActionType action) {
+        mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, slot, button, action, mc.player);
+    }
+
+    public static int invIndexToSlotId(int invIndex) {
+        if (invIndex < 9 && invIndex != -1) return 44 - (8 - invIndex);
+        return invIndex;
+    }
+
     // Find slot
 
     //Hotbar

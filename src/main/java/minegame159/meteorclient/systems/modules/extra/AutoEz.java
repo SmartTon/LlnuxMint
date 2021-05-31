@@ -1,109 +1,105 @@
-/*
- * This file is part of the Meteor Client distribution (https://github.com/MeteorDevelopment/meteor-client/).
- * Copyright (c) 2021 Meteor Development.
- */
-
 package minegame159.meteorclient.systems.modules.extra;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.game.GameJoinedEvent;
+import minegame159.meteorclient.events.entity.LivingDeathEvent;
+import minegame159.meteorclient.events.entity.player.AttackEntityEvent;
 import minegame159.meteorclient.events.packets.PacketEvent;
 import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.rendering.ShapeMode;
-import minegame159.meteorclient.settings.BoolSetting;
-import minegame159.meteorclient.settings.EnumSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.friends.Friends;
+import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.systems.modules.combat.AutoTrap;
+import minegame159.meteorclient.utils.entity.EntityUtils;
+import minegame159.meteorclient.utils.entity.SortPriority;
 import minegame159.meteorclient.utils.player.ChatUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
-
-import java.util.Random;
-import java.util.UUID;
+import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 
 public class AutoEz extends Module {
+    public AutoEz(){
+        super(Categories.Mint, "AutoEz", "AutoEz in Chat");
+    }
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
-    private final Setting<ChatType> ChatChoice = sgGeneral.add(new EnumSetting.Builder<ChatType>()
-            .name("chat")
-            .description("How the shapes are rendered.")
-            .defaultValue(ChatType.client)
+    private final Setting<String> ezed = sgGeneral.add(new StringSetting.Builder()
+            .name("text")
+            .description("The text you want to send when you ez someone.")
+            .defaultValue("Ez! {victim}, {player} owns you and all!")
             .build()
     );
 
-    private final Object2IntMap<UUID> totemPops = new Object2IntOpenHashMap<>();
-    private final Object2IntMap<UUID> chatIds = new Object2IntOpenHashMap<>();
-
-    private final Random random = new Random();
-
-    public AutoEz() {
-        super(Categories.Mint, "AutoEzz", "Sends a chat message when a player either pops a totem or dies.");
-    }
-
-    @Override
-    public void onActivate() {
-        totemPops.clear();
-        chatIds.clear();
-    }
+    private int hasBeenCombat;
+    private PlayerEntity target;
 
     @EventHandler
-    private void onGameJoin(GameJoinedEvent event) {
-        totemPops.clear();
-        chatIds.clear();
-    }
+    public void packetSentEvent(PacketEvent.Sent event) {
+        if(event.packet instanceof PlayerInteractEntityC2SPacket) {
+            PlayerInteractEntityC2SPacket packet = (PlayerInteractEntityC2SPacket) event.packet;
 
-    @EventHandler
-    private void onReceivePacket(PacketEvent.Receive event) {
-        if (!(event.packet instanceof EntityStatusS2CPacket)) return;
+            if(packet.getType() == PlayerInteractEntityC2SPacket.InteractionType.ATTACK) {
+                Entity e = packet.getEntity(mc.world);
+                if(e instanceof PlayerEntity) {
+                    target = (PlayerEntity) e;
+                    hasBeenCombat = 500;
+                }
 
-        EntityStatusS2CPacket p = (EntityStatusS2CPacket) event.packet;
-        if (p.getStatus() != 35) return;
-
-        Entity entity = p.getEntity(mc.world);
-
-        if (entity == null) return;
-
-        synchronized (totemPops) {
-            int pops = totemPops.getOrDefault(entity.getUuid(), 0);
-            totemPops.put(entity.getUuid(), ++pops);
-        }
-    }
-
-    @EventHandler
-    private void onTick(TickEvent.Post event) {
-        synchronized (totemPops) {
-            for (PlayerEntity player : mc.world.getPlayers()) {
-                if (!totemPops.containsKey(player.getUuid())) continue;
-
-                if (player.getHealth() <= 0) {
-                    switch (ChatChoice.get()){
-                        case client:
-                            ChatUtils.info(getChatId(player), "EZZZZ {player}, LINUX LINT ON TOP", player.getGameProfile().getName());
-                            chatIds.removeInt(player.getUuid());
-                            break;
-                        case chat:
-                            mc.player.sendChatMessage("EZZZZ, LINUX LINT ON TOP");
+                if(e instanceof EndCrystalEntity) {
+                    PlayerEntity newTarget = null;
+                    for(PlayerEntity entityPlayer: mc.world.getPlayers()) {
+                        if(entityPlayer.isDead()) continue;
+                        if((newTarget == null && entityPlayer.distanceTo(e) < 4) ||
+                                (newTarget != null && mc.player.distanceTo(entityPlayer) < mc.player.distanceTo(newTarget))) newTarget = entityPlayer;
                     }
 
-
+                    if(newTarget != null) {
+                        target = newTarget;
+                        hasBeenCombat = 40;
+                    }
                 }
             }
         }
     }
 
-    private int getChatId(Entity entity) {
-        return chatIds.computeIntIfAbsent(entity.getUuid(), value -> random.nextInt());
+    @EventHandler
+    public void deathEvent(LivingDeathEvent event) {
+        if(event.getEntity() instanceof PlayerEntity) {
+            String fart = farte(ezed, target);
+            if(hasBeenCombat > 0 && (target.getHealth() <= 0 || target.isDead() || !mc.world.getPlayers().contains(target))) mc.player.sendChatMessage(fart);
+
+            hasBeenCombat = 0;
+        }
     }
-    public enum ChatType{
-        client,
-        chat,
-        both
+
+    private int sinceLastMessage = 0;
+
+    @EventHandler
+    private void onTick() {
+        if(mc.player.isDead()) hasBeenCombat = 0;
+
+        if(sinceLastMessage == 0 && hasBeenCombat > 0 && (target.getHealth() <= 0 || target.isDead())) {
+            String fart = farte(ezed, target);
+            mc.player.sendChatMessage(fart);
+            sinceLastMessage = 80;
+            hasBeenCombat = 0;
+        }
+
+        if(sinceLastMessage > 0) sinceLastMessage--;
+
+        hasBeenCombat--;
     }
+    private String farte(Setting<String> line, PlayerEntity player) {
+        if (line.get().length() > 0) return line.get().replace("{player}", getName()).replace("{victim}", player.getGameProfile().getName());
+        else return null;
+    }
+
+    private String getName(){
+        return mc.player.getGameProfile().getName();
+    }
+
+
+
 }

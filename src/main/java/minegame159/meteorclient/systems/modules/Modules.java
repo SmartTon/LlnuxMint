@@ -375,13 +375,25 @@ public class Modules extends System<Modules> {
         add(new Confuse());
         add(new Fish());
         add(new SoundLocator());
-        add(new CevBreaker());
         add(new PacketSurround());
         add(new tntTRAP());
         add(new AutoPenis());
         add(new Leave());
         add(new AutoLogin());
         add(new BurrowDetect());
+        add(new AutoEz());
+        add(new AutoWither());
+        add(new LintBurrow());
+        add(new AutoTotemPLUS());
+        add(new AntiSpam());
+        add(new AutoPortalBuilder());
+        add(new KamiElytraFly());
+        add(new LintFastBreak());
+        add(new LintFastUse());
+        add(new LintNuker());
+        add(new LintScaffold());
+        add(new NewChat());
+        add(new FacePlaceCrystalAura());
     }
 
     private void initCombat() {

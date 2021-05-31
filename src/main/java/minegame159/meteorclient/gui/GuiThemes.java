@@ -6,6 +6,7 @@
 package minegame159.meteorclient.gui;
 
 import minegame159.meteorclient.MeteorClient;
+import minegame159.meteorclient.gui.themes.meteor.CustomLintTheme;
 import minegame159.meteorclient.gui.themes.meteor.MeteorGuiTheme;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -26,7 +27,9 @@ public class GuiThemes {
 
     public static void init() {
         add(new MeteorGuiTheme());
+        add(new CustomLintTheme());
     }
+
 
     public static void postInit() {
         if (FILE.exists()) {
