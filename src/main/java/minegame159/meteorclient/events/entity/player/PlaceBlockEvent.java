@@ -7,6 +7,7 @@ package minegame159.meteorclient.events.entity.player;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public class PlaceBlockEvent {
     private static final PlaceBlockEvent INSTANCE = new PlaceBlockEvent();

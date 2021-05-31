@@ -21,7 +21,7 @@ import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.System;
 import minegame159.meteorclient.systems.Systems;
 import minegame159.meteorclient.systems.modules.combat.*;
-import minegame159.meteorclient.systems.modules.extra.PacketSurround;
+import minegame159.meteorclient.systems.modules.Lint.PacketSurround;
 import minegame159.meteorclient.systems.modules.misc.*;
 import minegame159.meteorclient.systems.modules.movement.*;
 import minegame159.meteorclient.systems.modules.movement.elytrafly.ElytraFly;
@@ -32,7 +32,7 @@ import minegame159.meteorclient.systems.modules.render.hud.HUD;
 import minegame159.meteorclient.systems.modules.render.search.Search;
 import minegame159.meteorclient.systems.modules.world.Timer;
 import minegame159.meteorclient.systems.modules.world.*;
-import minegame159.meteorclient.systems.modules.extra.*;
+import minegame159.meteorclient.systems.modules.Lint.*;
 import minegame159.meteorclient.utils.Utils;
 import minegame159.meteorclient.utils.misc.input.Input;
 import minegame159.meteorclient.utils.misc.input.KeyAction;
@@ -80,7 +80,8 @@ public class Modules extends System<Modules> {
         initRender();
         initWorld();
         initMisc();
-	initMint();
+        initSimpleLint();
+	    initExtraLint();
     }
 
     public void sortModules() {
@@ -358,42 +359,47 @@ public class Modules extends System<Modules> {
         add(module);
     }
 
-    private void initMint(){
+    private void initSimpleLint(){
         add(new AntiSetHome());
-        add(new AutoHighway());
-        add(new AutoTNT());
-        add(new AutoTopBreaker());
-        add(new ButtonAura());
-        add(new FullSurround());
-        add(new Phase());
-        add(new tntTRAP());
         add(new TPSSync());
-        add(new WebAura());
-        add(new AutoBurrowBreaker());
         add(new BoatGlitch());
         add(new BoatPhase());
         add(new Confuse());
         add(new Fish());
         add(new SoundLocator());
-        add(new PacketSurround());
-        add(new tntTRAP());
         add(new AutoPenis());
-        add(new Leave());
+        add(new AutoLeave());
         add(new AutoLogin());
         add(new BurrowDetect());
         add(new AutoEz());
+        add(new AntiSpam());
+        add(new NewChat());
+        add(new KamiElytraFly());
+        add(new AutoPortalBuilder());
+    }
+
+    private void initExtraLint(){
+
+        add(new AutoHighway());
+        add(new AutoTNT());
+        add(new AutoTopBreaker());
+        add(new ButtonAura());
+        add(new Phase());
+        add(new tntTRAP());
+        add(new WebAura());
+        add(new AutoBurrowBreaker());
+        add(new PacketSurround());
+        add(new tntTRAP());
         add(new AutoWither());
         add(new LintBurrow());
         add(new AutoTotemPLUS());
-        add(new AntiSpam());
-        add(new AutoPortalBuilder());
-        add(new KamiElytraFly());
         add(new LintFastBreak());
         add(new LintFastUse());
         add(new LintNuker());
         add(new LintScaffold());
-        add(new NewChat());
         add(new FacePlaceCrystalAura());
+        add(new PistonAura());
+        add(new LintSurround());
     }
 
     private void initCombat() {
@@ -587,19 +593,6 @@ public class Modules extends System<Modules> {
         add(new BetterTab());
     }
 
-    private void initExtra() {
-
-        add(new tntTRAP());
-	add(new AutoTNT());
-	add(new ButtonAura());
-	add(new Phase());
-	add(new FullSurround());
-	add(new AntiSetHome());
-	add(new AutoPenis());
-	add(new Leave());
-	add(new AutoLogin());
-	
-    }
 
     public static class ModuleRegistry extends Registry<Module> {
         public ModuleRegistry() {
