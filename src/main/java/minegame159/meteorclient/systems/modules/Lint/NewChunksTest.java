@@ -48,7 +48,7 @@ public class NewChunksTest extends Module {
     private static final Direction[] searchDirs = new Direction[] { Direction.EAST, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.UP };
 
     public NewChunksTest() {
-        super(Categories.Mint,"new-chunks", "Detects completely new chunks using certain traits of them");
+        super(Categories.ExtraLint,"new-chunks", "Detects completely new chunks using certain traits of them");
     }
 
     @Override
