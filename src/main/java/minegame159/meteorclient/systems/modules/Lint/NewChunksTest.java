@@ -1,4 +1,4 @@
-package minegame159.meteorclient.systems.modules.extra;
+package minegame159.meteorclient.systems.modules.Lint;
 
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.packets.PacketEvent;
