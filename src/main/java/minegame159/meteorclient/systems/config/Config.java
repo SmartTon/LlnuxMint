@@ -38,11 +38,11 @@ public class Config extends System<Config> {
 
         ModMetadata metadata = FabricLoader.getInstance().getModContainer("meteor-client").get().getMetadata();
 
-        String versionString = metadata.getVersion().getFriendlyString();
+        String versionString = "2.0";
         if (versionString.contains("-")) versionString = versionString.split("-")[0];
 
         version = new Version(versionString);
-        devBuild = metadata.getCustomValue("meteor-client:devbuild").getAsString();
+        devBuild = "2.0";
     }
 
     public static Config get() {
@@ -109,3 +109,4 @@ public class Config extends System<Config> {
         return tag.contains(key) ? tag.getInt(key) : setting.get();
     }
 }
+
