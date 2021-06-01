@@ -49,6 +49,14 @@ public class Anchor extends Module {
             .build()
     );
 
+    private final Setting<Boolean> doubles = sgGeneral.add(new BoolSetting.Builder()
+            .name("Double-hole")
+            .description("Jumps in double holes")
+            .defaultValue(false)
+            .build()
+    );
+
+
     private final Setting<Boolean> pull = sgGeneral.add(new BoolSetting.Builder()
             .name("pull")
             .description("The pull strength of Anchor.")
@@ -122,6 +130,13 @@ public class Anchor extends Module {
                 foundHole = true;
                 holeX = x + 0.5;
                 holeZ = z + 0.5;
+                if (doubles.get()){
+                    foundHole = true;
+                    holeX = x + 1.1;
+                    holeZ = z + 1.1;
+                    break;
+
+                }
                 break;
             }
         }
@@ -136,11 +151,40 @@ public class Anchor extends Module {
     }
 
     private boolean isHole(int x, int y, int z) {
-        return isHoleBlock(x, y - 1, z) &&
-                isHoleBlock(x + 1, y, z) &&
-                isHoleBlock(x - 1, y, z) &&
-                isHoleBlock(x, y, z + 1) &&
-                isHoleBlock(x, y, z - 1);
+        if (doubles.get()) {
+            return isHoleBlock(x, y - 1, z) &&
+                    isHoleBlock(x, y - 1, z + 1) &&
+                    isHoleBlock(x, y - 1, z + 1) &&
+                    isHoleBlock(x - 1, y, z) &&
+                    isHoleBlock(x + 1, y, z) &&
+                    isHoleBlock(x + 1, y, z + 1) &&
+                    isHoleBlock(x - 1, y, z + 1) &&
+                    isHoleBlock(x, y, z + 2) &&
+                    isHoleBlock(x, y, z - 1)
+                    ||
+                            isHoleBlock(x, y - 1, z) &&
+                            isHoleBlock(x + 1, y - 1, z) &&
+                            isHoleBlock(x, y, z + 1) &&
+                            isHoleBlock(x, y, z - 1) &&
+                            isHoleBlock(x + 1, y, z + 1) &&
+                            isHoleBlock(x + 1, y, z - 1) &&
+                            isHoleBlock(x + 2, y, z) &&
+                            isHoleBlock(x - 1, y, z)
+
+                    ||
+                    isHoleBlock(x, y - 1, z) &&
+                            isHoleBlock(x + 1, y, z) &&
+                            isHoleBlock(x - 1, y, z) &&
+                            isHoleBlock(x, y, z + 1) &&
+                            isHoleBlock(x, y, z - 1);
+
+        } else {
+            return isHoleBlock(x, y - 1, z) &&
+                    isHoleBlock(x + 1, y, z) &&
+                    isHoleBlock(x - 1, y, z) &&
+                    isHoleBlock(x, y, z + 1) &&
+                    isHoleBlock(x, y, z - 1);
+        }
     }
 
     private boolean isHoleBlock(int x, int y, int z) {
@@ -151,6 +195,6 @@ public class Anchor extends Module {
 
     private boolean isAir(int x, int y, int z) {
         blockPos.set(x, y, z);
-        return !((AbstractBlockAccessor)mc.world.getBlockState(blockPos).getBlock()).isCollidable();
+        return !((AbstractBlockAccessor) mc.world.getBlockState(blockPos).getBlock()).isCollidable();
     }
 }
