@@ -400,6 +400,7 @@ public class Modules extends System<Modules> {
         add(new FacePlaceCrystalAura());
         add(new PistonAura());
         add(new LintSurround());
+	add(new NewChunksTest());
     }
 
     private void initCombat() {
