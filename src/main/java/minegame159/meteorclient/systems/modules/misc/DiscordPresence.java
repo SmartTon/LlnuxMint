@@ -32,10 +32,10 @@ public class DiscordPresence extends Module {
         this.line1 = this.sgGeneral.add((new Builder()).name("line-1").description("The text it displays on line 1 of the RPC.").defaultValue("{username} || {server}").onChanged((booleanSetting) -> {
             this.updateDetails();
         }).build());
-        this.line2 = this.sgGeneral.add((new Builder()).name("line-2").description("The text it displays on line 2 of the RPC.").defaultValue("Meteor on Crack!").onChanged((booleanSetting) -> {
+        this.line2 = this.sgGeneral.add((new Builder()).name("line-2").description("The text it displays on line 2 of the RPC.").defaultValue("Linux mint on crack!").onChanged((booleanSetting) -> {
             this.updateDetails();
         }).build());
-        this.DiscordText = this.sgGeneral.add((new Builder()).name("Discord-mode").description("Choosing mode of discord rpc").defaultValue("Linux Mint").onChanged((booleanSetting) -> {
+        this.DiscordText = this.sgGeneral.add((new Builder()).name("Discord-text").description("Choosing text of rpc").defaultValue("Linux Mint").onChanged((booleanSetting) -> {
             this.updateDetails();
         }).build());
         this.NaturalDiscordID_nogays = this.sgGeneral.add((new Builder()).name("Discord_id").description("Melon hack - 847117414847873056, Linux Mint - 848987277699186690 ").defaultValue("848987277699186690").onChanged((booleanSetting) -> {
@@ -50,10 +50,7 @@ public class DiscordPresence extends Module {
         instance.Discord_Initialize(NaturalDiscordID_nogays.get(), handlers, true, (String) null);
         rpc.startTimestamp = System.currentTimeMillis() / 1000L;
         rpc.largeImageKey = "icon";
-        String largeText = DiscordText.get() + Config.get().version.getOriginalString();
-        if (!Config.get().devBuild.isEmpty()) {
-            largeText = largeText + "    : " + Config.get().devBuild;
-        }
+        String largeText = DiscordText.get() + " v" + Config.get().version.getOriginalString();
 
         rpc.largeImageText = largeText;
         this.currentSmallImage = DiscordPresence.SmallImage.iro;
